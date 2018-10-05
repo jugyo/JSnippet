@@ -3,6 +3,7 @@
 import * as process from "process";
 import * as vscode from "vscode";
 import * as fs from "fs-extra";
+import { exec } from "child_process";
 
 const dirPath = `${process.env.HOME}/.vscode/jsnippet`;
 const extension = "snippet";
@@ -72,6 +73,11 @@ const pasteSnippet = async () => {
   }
 };
 
+const openSnippetsDir = () => {
+  // NOTE: Now it suports only OSX
+  exec(`open ${dirPath}`);
+}
+
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -85,6 +91,10 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "extension.jsnippet.pasteSnippet",
       pasteSnippet
+    ),
+    vscode.commands.registerCommand(
+      "extension.jsnippet.openSnippetsDir",
+      openSnippetsDir
     )
   );
 }
