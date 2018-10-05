@@ -1,9 +1,10 @@
 {
     "name": "jsnippet",
     "displayName": "jsnippet",
-    "description": "",
+    "description": "VSCode Extention to manage snippets in a different way as VSCode does.",
     "version": "0.0.1",
     "publisher": "jugyo",
+    "repository": "https://github.com/jugyo/JSnippet",
     "engines": {
         "vscode": "^1.27.0"
     },
@@ -11,14 +12,24 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:extension.jsnippet.createSnippet",
+        "onCommand:extension.jsnippet.openSnippet",
+        "onCommand:extension.jsnippet.pasteSnippet"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "extension.jsnippet.createSnippet",
+                "title": "JSnippet: Create Snippet"
+            },
+            {
+                "command": "extension.jsnippet.openSnippet",
+                "title": "JSnippet: Open Snippet"
+            },
+            {
+                "command": "extension.jsnippet.pasteSnippet",
+                "title": "JSnippet: Snippets"
             }
         ]
     },
@@ -30,10 +41,14 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.21",
-        "tslint": "^5.8.0",
+        "@types/mocha": "^2.2.42",
         "@types/node": "^8.10.25",
-        "@types/mocha": "^2.2.42"
+        "tslint": "^5.8.0",
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.21"
+    },
+    "dependencies": {
+        "@types/fs-extra": "^5.0.4",
+        "fs-extra": "^7.0.0"
     }
 }

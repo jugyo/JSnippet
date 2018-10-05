@@ -1,29 +1,92 @@
-'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+"use strict";
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+import * as process from "process";
+import * as vscode from "vscode";
+import * as fs from "fs-extra";
+
+const dirPath = `${process.env.HOME}/.vscode/jsnippet`;
+const extension = "snippet";
+const template = "console.log($1);";
+
+const open = async (name: string, code: string = "") => {
+  const path = `${dirPath}/${encodeName(name)}`;
+  if (!fs.existsSync(path)) {
+    await fs.outputFile(path, code);
+  }
+
+  const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(path));
+  vscode.window.showTextDocument(doc);
+};
+
+const encodeName = (name: string) => `${encodeURIComponent(name)}.${extension}`;
+
+const decodeName = (name: string) =>
+  decodeURIComponent(name.replace(new RegExp(`\.${extension}$`), ""));
+
+const createSnippet = async () => {
+  const name = await vscode.window.showInputBox({
+    prompt: "Enter snippet name"
+  });
+  if (!name || name.length === 0) {
+    return;
+  }
+
+  let code = null;
+  const editor = vscode.window.activeTextEditor;
+  if (editor) {
+    const selection = editor.selection;
+    code = editor.document.getText(selection);
+  }
+  code = code || template;
+
+  open(name, code);
+};
+
+const selectSnippet = async () => {
+  const files = await fs.readdir(dirPath);
+  const items = files
+    .filter((i: string) => i.endsWith(`.${extension}`))
+    .map(decodeName);
+  return await vscode.window.showQuickPick(items);
+};
+
+const openSnippet = async () => {
+  const name = await selectSnippet();
+  if (!name) {
+    return;
+  }
+  open(name);
+};
+
+const pasteSnippet = async () => {
+  const name = await selectSnippet();
+  if (!name) {
+    return;
+  }
+  const path = `${dirPath}/${encodeName(name)}`;
+  const code = await fs.readFile(path, "utf8");
+  if (vscode.window.activeTextEditor) {
+    await vscode.window.activeTextEditor.insertSnippet(
+      new vscode.SnippetString(code)
+    );
+  }
+};
+
 export function activate(context: vscode.ExtensionContext) {
-
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "jsnippet" is now active!');
-
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-        // The code you place here will be executed every time your command is executed
-
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
-    });
-
-    context.subscriptions.push(disposable);
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "extension.jsnippet.createSnippet",
+      createSnippet
+    ),
+    vscode.commands.registerCommand(
+      "extension.jsnippet.openSnippet",
+      openSnippet
+    ),
+    vscode.commands.registerCommand(
+      "extension.jsnippet.pasteSnippet",
+      pasteSnippet
+    )
+  );
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() {
-}
+export function deactivate() {}
