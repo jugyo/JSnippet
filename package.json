@@ -2,7 +2,7 @@
     "name": "jsnippet",
     "displayName": "JSnippet",
     "description": "VSCode Extension to manage snippets in a different way as VSCode does.",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "jugyo",
     "repository": "https://github.com/jugyo/JSnippet",
     "engines": {
