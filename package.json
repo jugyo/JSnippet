@@ -1,7 +1,7 @@
 {
     "name": "jsnippet",
     "displayName": "JSnippet",
-    "description": "VSCode Extention to manage snippets in a different way as VSCode does.",
+    "description": "VSCode Extension to manage snippets in a different way as VSCode does.",
     "version": "0.0.2",
     "publisher": "jugyo",
     "repository": "https://github.com/jugyo/JSnippet",
